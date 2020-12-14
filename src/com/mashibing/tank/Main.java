@@ -9,8 +9,9 @@ public class Main {
 //        f.setLocation(200,100);
 //        f.setSize(800,600);
 //        f.setVisible(true);
-        TankFrame tf = new TankFrame();
-        tf.setVisible(true);
+//        TankFrame tf = new TankFrame();
+//        tf.setVisible(true);
+        TankFrame.INSTANCE.setVisible(true);
 
         for(;;){
             try{
@@ -19,7 +20,7 @@ public class Main {
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
-            tf.repaint();
+            TankFrame.INSTANCE.repaint();
         }
 
     }

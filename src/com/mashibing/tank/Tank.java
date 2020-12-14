@@ -13,16 +13,16 @@ public class Tank {
     private boolean moving = false;
     private Group group;
 
-    TankFrame tf;
+ //   TankFrame tf;
 
     public static final int SPEED = 2;
 
-    public Tank(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public Tank(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
-        this.tf =tf;
+     //   this.tf =tf;
     }
 
     public void paint(Graphics g) {
@@ -154,7 +154,7 @@ public class Tank {
 
     private void fire() {
 //        new Bullet(x,y,dir,group);
-        tf.add(new Bullet(x,y,dir,group));
+        TankFrame.INSTANCE.add(new Bullet(x,y,dir,group));
     }
 
 
