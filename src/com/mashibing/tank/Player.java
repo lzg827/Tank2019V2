@@ -1,12 +1,9 @@
 package com.mashibing.tank;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
-public class Tank {
+public class Player {
     public static final int SPEED = 2;
     private int x, y;
     private Dir dir;
@@ -15,7 +12,7 @@ public class Tank {
     private Group group;
     private boolean live = true;
 
-    public Tank(int x, int y, Dir dir, Group group) {
+    public Player(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -63,7 +60,7 @@ public class Tank {
 
         if (!this.isLive())return;
 
-        if (this.group == Group.GOOD)
+
             switch (dir) {
                 case L:
                     g.drawImage(ResourceMgr.goodTankL, x, y, null);
@@ -78,23 +75,9 @@ public class Tank {
                     g.drawImage(ResourceMgr.goodTankD, x, y, null);
                     break;
             }
-        ;
 
-        if (this.group == Group.BAD)
-            switch (dir) {
-                case L:
-                    g.drawImage(ResourceMgr.badTankL, x, y, null);
-                    break;
-                case U:
-                    g.drawImage(ResourceMgr.badTankU, x, y, null);
-                    break;
-                case R:
-                    g.drawImage(ResourceMgr.badTankR, x, y, null);
-                    break;
-                case D:
-                    g.drawImage(ResourceMgr.badTankD, x, y, null);
-                    break;
-            }
+
+
 
         move();
     }
