@@ -29,9 +29,7 @@ public class Player {
         this.live = live;
     }
 
-    public void die() {
-        this.setLive(false);
-    }
+
 
     public int getX() {
         return x;
@@ -58,25 +56,23 @@ public class Player {
 //            e.printStackTrace();
 //        }
 
-        if (!this.isLive())return;
+        if (!this.isLive()) return;
 
 
-            switch (dir) {
-                case L:
-                    g.drawImage(ResourceMgr.goodTankL, x, y, null);
-                    break;
-                case U:
-                    g.drawImage(ResourceMgr.goodTankU, x, y, null);
-                    break;
-                case R:
-                    g.drawImage(ResourceMgr.goodTankR, x, y, null);
-                    break;
-                case D:
-                    g.drawImage(ResourceMgr.goodTankD, x, y, null);
-                    break;
-            }
-
-
+        switch (dir) {
+            case L:
+                g.drawImage(ResourceMgr.goodTankL, x, y, null);
+                break;
+            case U:
+                g.drawImage(ResourceMgr.goodTankU, x, y, null);
+                break;
+            case R:
+                g.drawImage(ResourceMgr.goodTankR, x, y, null);
+                break;
+            case D:
+                g.drawImage(ResourceMgr.goodTankD, x, y, null);
+                break;
+        }
 
 
         move();
@@ -168,6 +164,10 @@ public class Player {
         int bX = x + ResourceMgr.goodTankD.getWidth() / 2 - ResourceMgr.bulletL.getWidth() / 2;
         int bY = y + ResourceMgr.goodTankD.getHeight() / 2 - ResourceMgr.bulletL.getHeight() / 2;
         TankFrame.INSTANCE.add(new Bullet(bX, bY, dir, group));
+    }
+
+    public void die() {
+        this.setLive(false);
     }
 
 

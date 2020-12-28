@@ -10,10 +10,13 @@ import java.awt.event.KeyListener;
 public class TankFrame extends Frame {
     //    private int x=100, y=100;
     public static final TankFrame INSTANCE = new TankFrame();
-    private Tank myTank;
-    private Tank enemy;
-    // private Bullet bullet;
+    private Player myTank;
+    private  List<Explode> explodes;
 
+    //  private Tank enemy;
+    private List<Tank> tanks;
+
+    // private Bullet bullet;
     private List<Bullet> bullets;
 
     public static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
@@ -26,11 +29,22 @@ public class TankFrame extends Frame {
 
         this.addKeyListener(new TanKeyListener());
 
-        myTank = new Tank(100, 100, Dir.R, Group.GOOD);
-        enemy = new Tank(200, 200, Dir.D, Group.BAD);
+        initGameObjects();
+    }
+
+    private void initGameObjects() {
+        myTank = new Player(100, 100, Dir.R, Group.GOOD);
+        //   enemy = new Tank(200, 200, Dir.D, Group.BAD);
         // bullet = new Bullet(100,100,Dir.D ,Group.BAD);
 
         bullets = new ArrayList<>();
+        tanks = new ArrayList<>();
+        explodes = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            tanks.add(new Tank((100 + 50 * i), 200, Dir.D, Group.BAD));
+        }
+
     }
 
     public void add(Bullet bullet) {
@@ -44,20 +58,42 @@ public class TankFrame extends Frame {
         Color c = g.getColor();
         g.setColor(Color.WHITE);
         g.drawString("bullets:" + bullets.size(), 10, 50);
+        g.drawString("tanks:" + tanks.size(), 10, 70);
+        g.drawString("explodes:" + explodes.size(), 10, 90);
         g.setColor(c);
 
         myTank.paint(g);
-        enemy.paint(g);
+        //enemy.paint(g);
         //  bullet.paint(g);
 
+        for (int i = 0; i < tanks.size(); i++) {
+            if (!tanks.get(i).isLive()) {
+                tanks.remove(i);
+            } else {
+                tanks.get(i).paint(g);
+            };
+        }
+
+
         for (int i = 0; i < bullets.size(); i++) {
-            bullets.get(i).collidesWithTank(enemy);
+            for (int j = 0; j < tanks.size(); j++) {
+                bullets.get(i).collidesWithTank(tanks.get(j));
+            }
+            // bullets.get(i).collidesWithTank(enemy);
             if (!bullets.get(i).isLive()) {
                 bullets.remove(i);
             } else {
                 bullets.get(i).paint(g);
             }
 
+        };
+
+        for (int i = 0; i < explodes.size(); i++) {
+            if (!explodes.get(i).isLive()) {
+                explodes.remove(i);
+            } else {
+                explodes.get(i).paint(g);
+            }
         }
     }
 
@@ -75,6 +111,10 @@ public class TankFrame extends Frame {
         gOffScreen.setColor(c);
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
+    }
+
+    public void add(Explode explode) {
+        this.explodes.add(explode);
     }
 
     private class TanKeyListener extends KeyAdapter {

@@ -5,15 +5,20 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 public class Tank {
-    public static final int SPEED = 2;
+    public static final int SPEED = 1;
     private int x, y;
     private Dir dir;
     private boolean bL, bU, bR, bD;
-    private boolean moving = false;
+    private boolean moving = true;
     private Group group;
     private boolean live = true;
+
+    private int oldX,oldY;
+    private  int width,height;
+
 
     public Tank(int x, int y, Dir dir, Group group) {
         this.x = x;
@@ -21,6 +26,20 @@ public class Tank {
         this.dir = dir;
         this.group = group;
         //   this.tf =tf;
+
+        oldX = x;
+        oldY = y;
+
+        this.width = ResourceMgr.goodTankU.getWidth();
+        this.height = ResourceMgr.goodTankU.getHeight();
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public boolean isLive() {
@@ -32,9 +51,6 @@ public class Tank {
         this.live = live;
     }
 
-    public void die() {
-        this.setLive(false);
-    }
 
     public int getX() {
         return x;
@@ -61,81 +77,39 @@ public class Tank {
 //            e.printStackTrace();
 //        }
 
-        if (!this.isLive())return;
+        if (!this.isLive()) return;
 
-        if (this.group == Group.GOOD)
-            switch (dir) {
-                case L:
-                    g.drawImage(ResourceMgr.goodTankL, x, y, null);
-                    break;
-                case U:
-                    g.drawImage(ResourceMgr.goodTankU, x, y, null);
-                    break;
-                case R:
-                    g.drawImage(ResourceMgr.goodTankR, x, y, null);
-                    break;
-                case D:
-                    g.drawImage(ResourceMgr.goodTankD, x, y, null);
-                    break;
-            }
-        ;
+        oldX = x;
+        oldY = y;
 
-        if (this.group == Group.BAD)
-            switch (dir) {
-                case L:
-                    g.drawImage(ResourceMgr.badTankL, x, y, null);
-                    break;
-                case U:
-                    g.drawImage(ResourceMgr.badTankU, x, y, null);
-                    break;
-                case R:
-                    g.drawImage(ResourceMgr.badTankR, x, y, null);
-                    break;
-                case D:
-                    g.drawImage(ResourceMgr.badTankD, x, y, null);
-                    break;
-            }
+        switch (dir) {
+            case L:
+                g.drawImage(ResourceMgr.badTankL, x, y, null);
+                break;
+            case U:
+                g.drawImage(ResourceMgr.badTankU, x, y, null);
+                break;
+            case R:
+                g.drawImage(ResourceMgr.badTankR, x, y, null);
+                break;
+            case D:
+                g.drawImage(ResourceMgr.badTankD, x, y, null);
+                break;
+        }
 
         move();
+        boundsCheck();
     }
 
-    public void keyPressed(KeyEvent e) {
-
-        int key = e.getKeyCode();
-        switch (key) {
-            case KeyEvent.VK_LEFT:
-                bL = true;
-                break;
-            case KeyEvent.VK_UP:
-                bU = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-                bR = true;
-                break;
-            case KeyEvent.VK_DOWN:
-                bD = true;
-                break;
+    private void boundsCheck() {
+        if (x < 0 || y < 30 || x + width > TankFrame.GAME_WIDTH || y + height> TankFrame.GAME_HEIGHT) {
+            this.back();
         }
-
-        setMainDir();
-
     }
 
-    private void setMainDir() {
-        if (!bL && !bU && !bR && !bD)
-            moving = false;
-        else {
-            moving = true;
-            if (bL && !bU && !bR && !bD)
-                dir = Dir.L;
-            if (!bL && bU && !bR && !bD)
-                dir = Dir.U;
-            if (!bL && !bU && bR && !bD)
-                dir = Dir.R;
-            if (!bL && !bU && !bR && bD)
-                dir = Dir.D;
-        }
-
+    private void back() {
+        this.x = oldX;
+        this.y = oldY;
     }
 
 
@@ -156,35 +130,32 @@ public class Tank {
                 y += SPEED;
                 break;
         }
+
+        randomDir();
+
+        if (r.nextInt(100) > 90)
+            fire();
     }
 
-    public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-        switch (key) {
-            case KeyEvent.VK_LEFT:
-                bL = false;
-                break;
-            case KeyEvent.VK_UP:
-                bU = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                bR = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                bD = false;
-                break;
-            case KeyEvent.VK_CONTROL:
-                fire();
-                break;
-        }
-        setMainDir();
+    private Random r = new Random();
+
+    private void randomDir() {
+        //  this.dir = Dir.values()[random.nextInt(Dir.values().length)] ;
+        if (r.nextInt(100) > 90)
+            this.dir = Dir.ramdomDir();
     }
+
 
     private void fire() {
 //        new Bullet(x,y,dir,group);
         int bX = x + ResourceMgr.goodTankD.getWidth() / 2 - ResourceMgr.bulletL.getWidth() / 2;
         int bY = y + ResourceMgr.goodTankD.getHeight() / 2 - ResourceMgr.bulletL.getHeight() / 2;
         TankFrame.INSTANCE.add(new Bullet(bX, bY, dir, group));
+    }
+
+    public void die() {
+        this.setLive(false);
+        TankFrame.INSTANCE.add(new Explode(x,y));
     }
 
 

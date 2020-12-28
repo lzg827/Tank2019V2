@@ -7,12 +7,13 @@ public class Bullet {
     public boolean live = true;
     private int x, y;
     private Dir dir;
-    private Group group;
+    private Group group ;
 
     public Bullet(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.group = group;
     }
 
     public boolean isLive() {
@@ -65,9 +66,10 @@ public class Bullet {
     }
 
     public void collidesWithTank(Tank tank) {
-        if (!tank.isLive())return;
+        if (!this.isLive() || !tank.isLive())return;
+        if (this.group == tank.getGroup()) return;
 
-        Rectangle rect = new Rectangle(x, y, ResourceMgr.badTankU.getWidth(), ResourceMgr.badTankU.getHeight());
+        Rectangle rect = new Rectangle(x, y, ResourceMgr.bulletU.getWidth(), ResourceMgr.bulletU.getHeight());
         Rectangle recTank = new Rectangle(tank.getX(), tank.getY(), ResourceMgr.goodTankU.getWidth(), ResourceMgr.goodTankU.getHeight());
 
         if(rect.intersects(recTank)){
